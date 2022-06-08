@@ -1,23 +1,51 @@
-import logo from './logo.svg';
 import './App.css';
+import {useState} from 'react'
+import {Oval} from 'react-loader-spinner'
 
 function App() {
+
+  const [data, editData] = useState(new Array)
+  const [isLoading, editLoading] = useState(false)
+
+  const fetchData = async () => {
+    editLoading(true)
+    const res = await fetch('https://jsonplaceholder.typicode.com/photos')
+    if(res.ok) {
+      const dataRes =  await res.json()
+      editData(dataRes)
+    }else {
+      alert('Error')
+    }
+    await editLoading(false)
+  }
+
+  console.log(data)
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={fetchData}>FETCH DATA</button>
+      {isLoading && <Oval
+                      ariaLabel="loading-indicator"
+                      height={20}
+                      width={20}
+                      strokeWidth={5}
+                      color="gray"
+                      secondaryColor="smoke"
+                    />
+      }
+      <ul>
+        {
+          data.map((data, index) => {
+            return (
+              <li key={index}>
+                {data.title}
+                <br></br>
+                <a href={data.url}>{data.url}</a>
+              </li>
+            )
+          })
+        }
+      </ul>
     </div>
   );
 }
